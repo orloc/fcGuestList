@@ -19,6 +19,7 @@ class Database {
           id mediumint(9) not null auto_increment,
           created_at datetime default NOW() not null,
           email varchar(255) not null,
+          full_name varchar(255),
           event_id mediumint(9) not null,
           role_id mediumint(9) not null,
           responded tinyint(1) not null,
@@ -47,6 +48,7 @@ class Database {
         dbDelta($sql3);
 
         self::addDefaultRoles();
+        self::addDefaultUser();
     }
 
     private static function addDefaultRoles(){
@@ -63,6 +65,21 @@ class Database {
         $wpdb->insert($name, [
             'name' => 'RIA',
             'price' => 500
+        ]);
+    }
+
+    private static function addDefaultUser(){
+        global $wpdb;
+        $name = $wpdb->prefix.'guest';
+
+        $query = "delete from $name";
+        $wpdb->query($query);
+
+        $wpdb->insert($name, [
+            'full_name' => 'Grant Tepper',
+            'role_id' => 9,
+            'event_id' =>  '',
+            'email' => 'grant.tepper@gmail.com'
         ]);
     }
 }

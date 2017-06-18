@@ -7,8 +7,30 @@ class Views {
     public static function guestListAdmin(){
         $results = Database::doQuery("select *", 'guest_list');
         ?>
-        <div class="wrap">
+        <div class="wrap" ng-app="admin" ng-controller="listCtrl">
         <h1>Guest List</h1>
+        <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
+        <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
+        <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
+                <table class="form-table">
+                    <tr class="form-field form-required">
+                        <td><label for="role">Email</label></td>
+                        <td><input type="email" name="name"></td>
+                    </tr>
+                    <tr class="form-field form-required">
+                        <td><label for="role">Role</label></td>
+                        <td><select name="role">
+                                <option>Thing</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <p class="submit">
+                    <input type="submit" class="button-primary" value="Add new Event"/>
+                </p>
+            </form>
+        </div>
         <table class="widefat">
             <thead>
             <th>Email</th>
@@ -50,8 +72,23 @@ class Views {
     public static function eventListAdmin(){
         $results = Database::doQuery("select *", 'event');
         ?>
-        <div class="wrap">
+        <div class="wrap" ng-app="admin" ng-controller="listCtrl">
             <h1>Event List</h1>
+            <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
+            <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
+            <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
+                    <table class="form-table">
+                        <tr class="form-field form-required">
+                            <td><label for="role">Name</label></td>
+                            <td><input type="text" name="name"></td>
+                        </tr>
+                    </table>
+                    <p class="submit">
+                        <input type="submit" class="button-primary" value="Add new Event"/>
+                    </p>
+                </form>
+            </div>
             <table class="widefat">
                 <thead>
                 <th>Name</th>
@@ -97,7 +134,6 @@ class Views {
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
             <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
-            <?php var_dump(htmlspecialchars($_SERVER["PHP_SELF"]));?>
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
                     <table class="form-table">
                         <tr class="form-field form-required">
