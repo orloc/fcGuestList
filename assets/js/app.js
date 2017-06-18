@@ -3,6 +3,7 @@
 angular.module('admin', [])
 .controller('listCtrl', [ '$scope', function($scope){
     $scope.exists = false;
+    $scope.not_exists = false;
     $scope.show_edit = false;
     
     var exists = window.location.search
@@ -10,12 +11,23 @@ angular.module('admin', [])
         .filter(function(i) {
             return i.indexOf('exists') >= 0;
         }).pop();
+
+    var notexists = window.location.search
+        .split('&')
+        .filter(function(i) {
+            return i.indexOf('notExists') >= 0;
+        }).pop();
     
     var vals = exists ? exists.split('=') : 0;
+    var vals2 = notexists ? notexists.split('=') : 0;
     
     if (vals.length && Boolean(vals[1]) === true) {
         $scope.exists = true;
         $scope.show_edit = true;
+    }
+
+    if (vals2.length && Boolean(vals[1]) === true) {
+        $scope.not_exists = true;
     }
 
     angular.element('.delete').on('click',function($e){

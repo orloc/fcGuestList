@@ -26,11 +26,12 @@ class RoleView {
         list($a,$id) = array_values($_POST);
         $item = Database::hasItem($id, 'id', self::$TABLE_NAME);
         if ($item){
-            
-            var_dump($item);
+            Database::update(self::$TABLE_NAME, [
+                'deleted_at' => current_time('mysql', false)
+            ], [ 'id' => $id]);
+            wp_redirect(self::$pageUri, 200);
         }
-        
-        die;
+        wp_redirect(self::$pageUri.'&notExists=true', 200);
     }
 
     public static function getView(){
@@ -43,6 +44,10 @@ class RoleView {
             <h1>Role List</h1>
             <div class="error notice" ng-show="exists === true">
                 The Role you entered already exists. Please choose a different name.
+            </div>
+
+            <div class="error notice" ng-show="not_exists === true">
+                We couldn't find that item to modify.
             </div>
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
@@ -99,7 +104,7 @@ class RoleView {
                                     <form name='delete{$r->id}' method='post', action='/wp/wp-admin/admin-post.php'>
                                         <input type='hidden' name='action' value='delete_role'>
                                         <input type='hidden' name='id' value='{$r->id}'>
-                                        <input type='submit' style='float: right' class='button-secondary delete' value ='Remove'/>
+                                        <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
                                     </form>
                                 </td>
                             </tr>";

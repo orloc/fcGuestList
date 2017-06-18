@@ -19,7 +19,7 @@ class Database {
         global $wpdb;
 
         $tableName = $wpdb->prefix . $table;
-        $wpdb->insert($tableName, $data, $where);
+        $wpdb->update($tableName, $data, $where);
     }
     
     public static function hasItem($identifier, $field, $table) {
