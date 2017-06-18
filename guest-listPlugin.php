@@ -35,8 +35,8 @@ function guest_list_admin_actions(){
 
 function registerScripts(){
     wp_enqueue_script('jquery', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js');
-    wp_enqueue_script('angularjs','/../app/plugins/guest-listPlugin/bower_components/angular/angular.min.js');
-    wp_enqueue_script('admin','/../app/plugins/guest-listPlugin/assets/js/app.js');
+    wp_enqueue_script('angularjs','/../app/plugins/fcGuestList/bower_components/angular/angular.min.js');
+    wp_enqueue_script('admin','/../app/plugins/fcGuestList/assets/js/app.js');
 }
 
 
