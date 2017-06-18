@@ -1,6 +1,9 @@
 <?php
 
 class Views {
+
+    private static $pluginPath = __FILE__;
+    
     public static function guestListAdmin(){
         $results = Database::doQuery("select *", 'guest_list');
         ?>
@@ -84,17 +87,34 @@ class Views {
     }
 
     public static function roleListAdmin(){
+    
         $results = Database::doQuery("select *", 'member_type');
+        
 
         ?>
-        <div class="wrap">
+        <div class="wrap" ng-app="admin" ng-controller="listCtrl">
             <h1>Role List</h1>
-            <button  style="float: right" class="page-title-action aria-button-if-js">New</button>
-            <form name="roleNew">
-                <input type="text" name="role">
-                <input type="number" name="price">
-                <button class="submit" type="submit">Add New Role</button>
-            </form>
+            <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
+            <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
+            <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
+            <?php var_dump(htmlspecialchars($_SERVER["PHP_SELF"]));?>
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
+                    <table class="form-table">
+                        <tr class="form-field form-required">
+                            <td><label for="role">Role</label></td>
+                            <td><input type="text" name="role"></td>
+                        </tr>
+
+                        <tr class="form-field form-required">
+                            <td><label for="role">Price</label></td>
+                            <td><input type="number" name="price"></td>
+                        </tr>
+                    </table>
+                    <p class="submit">
+                        <input type="submit" class="button-primary" value="Add new Role"/>
+                    </p>
+                </form>
+            </div>
             <table class="widefat">
                 <thead>
                 <th>Role</th>
@@ -123,7 +143,7 @@ class Views {
                                      $formatted
                                 </td>
                                 <td>
-                                    <button  style='float: right' class='page-title-action aria-button-if-js'>Edit</button>
+                                    <button  style='float: right' class='page-title-action aria-button-if-js'>Remove</button>
                                 </td>
                             </tr>";
                 }
