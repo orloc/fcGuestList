@@ -6,13 +6,15 @@ class Views {
     
     public static function guestListAdmin(){
         $results = Database::doQuery("select *", 'guest_list');
+        $roleList = Database::doQuery("select *", 'member_type');
+        $events = Database::doQuery('select *', 'event');
         ?>
         <div class="wrap" ng-app="admin" ng-controller="listCtrl">
         <h1>Guest List</h1>
         <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
         <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
         <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew" method="POST">
                 <table class="form-table">
                     <tr class="form-field form-required">
                         <td><label for="role">Email</label></td>
@@ -21,7 +23,18 @@ class Views {
                     <tr class="form-field form-required">
                         <td><label for="role">Role</label></td>
                         <td><select name="role">
-                                <option>Thing</option>
+                            <?php foreach ($roleList as $e): ?>
+                                <option value="<?= $e->id ?>"><?= $e->name ?></option>
+                            <?php endforeach; ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="form-field form-required">
+                        <td><label for="event">Event</label></td>
+                        <td><select name="event">
+                            <?php foreach ($events as $e): ?>
+                                <option value="<?= $e->id ?>"><?= $e->name ?></option>
+                            <?php endforeach; ?>
                             </select>
                         </td>
                     </tr>
@@ -35,6 +48,7 @@ class Views {
             <thead>
             <th>Email</th>
             <th>Role</th>
+            <th>Event</th>
             <th>Responded</th>
             <th>Responded At</th>
             <th></th>
@@ -53,7 +67,10 @@ class Views {
                                     $r->email
                                 </td>
                                 <td>
-                                    $r->role_io                    
+                                    $r->role_id
+                                </td>
+                                <td>
+                                    $r->event_id
                                 </td>
                                 <td>
                                     $r->responded
@@ -77,7 +94,7 @@ class Views {
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
             <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" method="POST" name="roleNew">
                     <table class="form-table">
                         <tr class="form-field form-required">
                             <td><label for="role">Name</label></td>
@@ -109,7 +126,6 @@ class Views {
                                 $r->name
                             </td>
                             <td>
-                                $r->attended
                             </td>
                             <td>
                                  $formatted
@@ -134,7 +150,8 @@ class Views {
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
             <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" name="roleNew">
+                <form action="/wp/wp-admin/admin-post.php" name="roleNew" method="POST">
+                    <input type="hidden" name="action" value="submit_role">
                     <table class="form-table">
                         <tr class="form-field form-required">
                             <td><label for="role">Role</label></td>

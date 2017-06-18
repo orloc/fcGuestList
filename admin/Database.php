@@ -1,14 +1,37 @@
 <?php
 
 class Database {
-    public static function doQuery($query, $table){
+    public static function all($table){
         global $wpdb;
         $tableName = $wpdb->prefix . $table;
-        $guestQuery = "$query FROM $tableName";
+        $guestQuery = "select * FROM $tableName";
         return $wpdb->get_results($guestQuery);
     }
+    
+    public static function insert($table, $data){
+        global $wpdb;
 
-    public static function initGuestDb(){
+        $tableName = $wpdb->prefix . $table;
+        $wpdb->insert($tableName, $data);
+    }
+
+    public static function update($table, $data, $where){
+        global $wpdb;
+
+        $tableName = $wpdb->prefix . $table;
+        $wpdb->insert($tableName, $data, $where);
+    }
+    
+    public static function hasItem($identifier, $field, $table) {
+        global $wpdb;
+        $tableName = $wpdb->prefix . $table;
+        $guestQuery = $wpdb->prepare("select count(*) as count FROM $tableName where $field = %s", $identifier);
+        $res = $wpdb->get_results($guestQuery);
+        return boolval(array_pop($res)->count);
+        
+    }
+
+    public static function init(){
         global $wpdb;
 
         $tableName = $wpdb->prefix . 'guest_list';
@@ -22,8 +45,9 @@ class Database {
           full_name varchar(255),
           event_id mediumint(9) not null,
           role_id mediumint(9) not null,
-          responded tinyint(1) not null,
-          responded_at datetime not null,
+          responded tinyint(1) default 0 not null ,
+          deleted_at datetime,
+          responded_at datetime,
           PRIMARY KEY (id)
         )";
 
@@ -31,12 +55,14 @@ class Database {
           id mediumint(9) not null auto_increment,
           created_at datetime default NOW() not null,
           name varchar(255) not null,
+          deleted_at datetime,
           price int(9) not null,
           PRIMARY KEY (id)
         )";
 
         $sql3 = "CREATE TABLE $tableName3 (
           id mediumint(9) not null auto_increment,
+          deleted_at datetime,
           created_at datetime default NOW() not null,
           name varchar(255) not null,
           PRIMARY KEY (id)
@@ -48,7 +74,19 @@ class Database {
         dbDelta($sql3);
 
         self::addDefaultRoles();
-        self::addDefaultUser();
+        self::addDefaultEvent();
+    }
+    
+    private static function addDefaultEvent(){
+        global $wpdb;
+        $name = $wpdb->prefix.'event';
+
+        $query = "delete from $name";
+        $wpdb->query($query);
+
+        self::insert('event', [
+            'name' => 'Test Event'
+        ]);
     }
 
     private static function addDefaultRoles(){
@@ -58,28 +96,13 @@ class Database {
         $query = "delete from $name";
         $wpdb->query($query);
 
-        $wpdb->insert($name, [
+        self::insert('member_type', [
             'name' => 'Family Office',
             'price' => 150
         ]);
-        $wpdb->insert($name, [
+        self::insert('member_type', [
             'name' => 'RIA',
             'price' => 500
-        ]);
-    }
-
-    private static function addDefaultUser(){
-        global $wpdb;
-        $name = $wpdb->prefix.'guest';
-
-        $query = "delete from $name";
-        $wpdb->query($query);
-
-        $wpdb->insert($name, [
-            'full_name' => 'Grant Tepper',
-            'role_id' => 9,
-            'event_id' =>  '',
-            'email' => 'grant.tepper@gmail.com'
         ]);
     }
 }

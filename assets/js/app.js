@@ -2,7 +2,29 @@
 
 angular.module('admin', [])
 .controller('listCtrl', [ '$scope', function($scope){
+    $scope.exists = false;
     $scope.show_edit = false;
+    
+    var exists = window.location.search
+        .split('&')
+        .filter(function(i) {
+            return i.indexOf('exists') >= 0;
+        }).pop();
+    
+    var vals = exists ? exists.split('=') : 0;
+    
+    if (vals.length && Boolean(vals[1]) === true) {
+        $scope.exists = true;
+        $scope.show_edit = true;
+    }
+
+    angular.element('.delete').on('click',function($e){
+        if (!confirm('Are you sure you want to delete this item?')) {
+            $e.preventDefault();
+            $e.stopPropagation();
+        }
+    });
+
     
     $scope.toggleNew = function(){
         $scope.show_edit = !$scope.show_edit;
