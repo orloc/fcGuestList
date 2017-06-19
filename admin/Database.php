@@ -1,10 +1,14 @@
 <?php
 
 class Database {
-    public static function all($table){
+    public static function all($table, $hidden = true){
         global $wpdb;
         $tableName = $wpdb->prefix . $table;
         $guestQuery = "select * FROM $tableName";
+        
+        if ($hidden){
+            $guestQuery .= " where deleted_at is null";
+        }
         return $wpdb->get_results($guestQuery);
     }
     
@@ -66,7 +70,8 @@ class Database {
           deleted_at datetime,
           created_at datetime default NOW() not null,
           name varchar(255) not null,
-          lockout_date datetime not null,
+          is_active tinyint(1) not null,
+          lockout_date datetime,
           PRIMARY KEY (id)
         )";
 
@@ -81,18 +86,19 @@ class Database {
     
     private static function addDefaultEvent(){
         self::insert('event', [
-            'name' => 'Test Event'
+            'name' => 'Test Event',
+            'lockout_date' => null
         ]);
     }
 
     private static function addDefaultRoles(){
         self::insert('member_type', [
             'name' => 'Family Office',
-            'price' => 150
+            'price' => 500
         ]);
         self::insert('member_type', [
             'name' => 'RIA',
-            'price' => 500
+            'price' => 2500
         ]);
     }
 }

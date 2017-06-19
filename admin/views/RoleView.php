@@ -72,6 +72,7 @@ class RoleView {
             </div>
             <table class="widefat">
                 <thead>
+                <td>id</td>
                 <th>Role</th>
                 <th>Price</th>
                 <th>Created At</th>
@@ -91,6 +92,9 @@ class RoleView {
                     $archived = $r->deleted_at ? 'Yes' : 'No';
                     echo "<tr>
                                 <td>
+                                    $r->id
+                                </td>
+                                <td>
                                     $r->name
                                 </td>
                                 <td>
@@ -106,6 +110,7 @@ class RoleView {
                                         <input type='hidden' name='id' value='{$r->id}'>
                                         <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
                                     </form>
+                                    <a href=''>Edit</a>
                                 </td>
                             </tr>";
                 }

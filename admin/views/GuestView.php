@@ -33,6 +33,18 @@ class GuestView {
         wp_redirect(self::$pageUri.'&exists=true', 200);
     }
 
+    public static function handleDelete(){
+        list($a,$id) = array_values($_POST);
+        $item = Database::hasItem($id, 'id', self::$TABLE_NAME);
+        if ($item){
+            Database::update(self::$TABLE_NAME, [
+                'deleted_at' => current_time('mysql', false)
+            ], [ 'id' => $id]);
+            wp_redirect(self::$pageUri, 200);
+        }
+        wp_redirect(self::$pageUri.'&notExists=true', 200);
+    }
+
     public static function getView(){
         $results = Database::all(self::$TABLE_NAME);
         $roleList = Database::all('member_type');
@@ -89,11 +101,13 @@ class GuestView {
         </div>
         <table class="widefat">
             <thead>
+            <th>id</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Additions</th>
             <th>Event</th>
             <th>Responded</th>
-            <th>Responded At</th>
+            <th>Created At</th>
             <th></th>
             </thead>
             <tbody>
@@ -107,22 +121,34 @@ class GuestView {
                 $formatted = $date->format('m/d/Y h:i:s A');
                 $responded = $r->responded ? 'Yes' : 'No';
                 echo "<tr>
-                                <td>
-                                    $r->email
-                                </td>
-                                <td>
-                                    {$index['roles'][$r->role_id] }
-                                </td>
-                                <td>
-                                    {$index['events'][$r->event_id] }
-                                </td>
-                                <td>
-                                    $responded
-                                </td>
-                                <td>
-                                     $formatted
-                                </td>
-                            </tr>";
+                        <td>$r->id</td>
+                        <td>
+                            $r->email
+                        </td>
+                        <td>
+                            {$index['roles'][$r->role_id] }
+                        </td>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            {$index['events'][$r->event_id] }
+                        </td>
+                        <td>
+                            $responded
+                        </td>
+                        <td>
+                             $formatted
+                        </td>
+                        <td>
+                            <form name='delete{$r->id}' method='post', action='/wp/wp-admin/admin-post.php'>
+                                <input type='hidden' name='action' value='delete_guest'>
+                                <input type='hidden' name='id' value='{$r->id}'>
+                                <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
+                            </form>
+                            <a href=''>Edit</a>
+                        </td>
+                    </tr>";
             }
             ?>
             </tbody>
