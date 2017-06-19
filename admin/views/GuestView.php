@@ -14,7 +14,7 @@ class GuestView {
         list($a,$email, $role, $event) = array_values($_POST);
 
         $tableName = $wpdb->prefix . self::$TABLE_NAME;
-        $guestQuery = $wpdb->prepare("select count(*) as count FROM $tableName where  email= %s and event_id = %d", $email, $role);
+        $guestQuery = $wpdb->prepare("select count(*) as count FROM $tableName where  email= %s and event_id = %d and deleted_at is null", $email, $role);
         
         $res = $wpdb->get_results($guestQuery);
         $item = boolval(array_pop($res)->count);
@@ -95,7 +95,7 @@ class GuestView {
                     </tr>
                 </table>
                 <p class="submit">
-                    <input type="submit" class="button-primary" value="Add new Event"/>
+                    <input type="submit" class="button-primary" value="Add new Guest"/>
                 </p>
             </form>
         </div>
