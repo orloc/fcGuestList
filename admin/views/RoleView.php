@@ -3,10 +3,10 @@
 class RoleView {
     
     private static $TABLE_NAME = 'member_type';
-    private static $pageUri = '/wp/wp-admin/admin.php?page=guest-listPlugin/guest-listPlugin.phproles';
+    private static $pageUri = '/wp/wp-admin/admin.php?page=fcGuestList/guest-listPlugin.phproles';
     
     public static function handlePost(){
-        list($a,$role, $price) = array_values($_POST);        
+        list($a,$role, $price) = array_values($_POST);
         $item = Database::hasItem($role, 'name', self::$TABLE_NAME);
         
         if (!$item){

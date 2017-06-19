@@ -1,9 +1,25 @@
 <?php
 
 class EventView {
-    
-    public static function handlePost(){
 
+    private static $TABLE_NAME = 'event';
+    private static $postUri = '/wp/wp-admin/admin-post.php';
+    private static $pageUri = '/wp/wp-admin/admin.php?page=fcGuestList/guest-listPlugin.phpevents';
+
+    public static function handlePost(){
+        list($a,$name) = array_values($_POST);
+        $item = Database::hasItem($name, 'name', self::$TABLE_NAME);
+        
+        if (!$item){
+            Database::insert(self::$TABLE_NAME, [
+                'name' => $name,
+            ]);
+
+            wp_redirect(self::$pageUri, 200);
+            exit;
+        }
+        
+        wp_redirect(self::$pageUri.'&exists=true', 200);
     }
 
     public static function getView(){
@@ -14,11 +30,12 @@ class EventView {
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
             <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
             <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?page=guest-listPlugin/guest-listPlugin.phproles' ?>" method="POST" name="roleNew">
+                <form action="<?php echo self::$postUri ?>" method="POST" name="eventNew">
+                    <input type="hidden" name="action" value="submit_event">
                     <table class="form-table">
                         <tr class="form-field form-required">
                             <td><label for="role">Name</label></td>
-                            <td><input type="text" name="name"></td>
+                            <td><input type="text" name="name" required></td>
                         </tr>
                     </table>
                     <p class="submit">
@@ -29,7 +46,6 @@ class EventView {
             <table class="widefat">
                 <thead>
                 <th>Name</th>
-                <th>Attended</th>
                 <th>Created At</th>
                 </thead>
                 <tbody>
@@ -44,8 +60,6 @@ class EventView {
                     echo "<tr>
                             <td>
                                 $r->name
-                            </td>
-                            <td>
                             </td>
                             <td>
                                  $formatted

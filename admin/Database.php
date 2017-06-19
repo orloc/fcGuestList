@@ -26,6 +26,7 @@ class Database {
         global $wpdb;
         $tableName = $wpdb->prefix . $table;
         $guestQuery = $wpdb->prepare("select count(*) as count FROM $tableName where $field = %s", $identifier);
+        
         $res = $wpdb->get_results($guestQuery);
         return boolval(array_pop($res)->count);
         
@@ -34,7 +35,7 @@ class Database {
     public static function init(){
         global $wpdb;
 
-        $tableName = $wpdb->prefix . 'guest_list';
+        $tableName = $wpdb->prefix . 'guest';
         $tableName2 = $wpdb->prefix . 'member_type';
         $tableName3 = $wpdb->prefix . 'event';
 
@@ -65,6 +66,7 @@ class Database {
           deleted_at datetime,
           created_at datetime default NOW() not null,
           name varchar(255) not null,
+          lockout_date datetime not null,
           PRIMARY KEY (id)
         )";
 
@@ -78,24 +80,12 @@ class Database {
     }
     
     private static function addDefaultEvent(){
-        global $wpdb;
-        $name = $wpdb->prefix.'event';
-
-        $query = "delete from $name";
-        $wpdb->query($query);
-
         self::insert('event', [
             'name' => 'Test Event'
         ]);
     }
 
     private static function addDefaultRoles(){
-        global $wpdb;
-        $name = $wpdb->prefix.'member_type';
-
-        $query = "delete from $name";
-        $wpdb->query($query);
-
         self::insert('member_type', [
             'name' => 'Family Office',
             'price' => 150

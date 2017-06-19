@@ -20,8 +20,6 @@ add_action('admin_post_submit_guest', ['GuestView', 'handlePost']);
 add_action('admin_post_submit_event', ['EventView', 'handlePost']);
 
 add_action('admin_post_delete_role', ['RoleView', 'handleDelete']);
-add_action('admin_post_delete_guest', ['GuestView', 'handleDelete']);
-add_action('admin_post_delete_event', ['EventView', 'handleDelete']);
 
 add_action('admin_menu', 'guest_list_admin_actions');
 add_action( 'admin_enqueue_scripts', 'registerScripts' );
