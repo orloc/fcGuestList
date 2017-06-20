@@ -56,6 +56,16 @@ class Database {
           PRIMARY KEY (id)
         )";
 
+        $sql4 = "CREATE TABLE guest_additions (
+          id mediumint(9) not null auto_increment,
+          created_at datetime default NOW() not null,
+          email varchar(255) not null,
+          title varchar(255) not null,
+          full_name varchar(255),
+          guest_id mediumint(9) not null,
+          PRIMARY KEY (id)
+        )";
+
         $sql2 = "CREATE TABLE $tableName2 (
           id mediumint(9) not null auto_increment,
           created_at datetime default NOW() not null,
@@ -79,6 +89,7 @@ class Database {
         dbDelta($sql);
         dbDelta($sql2);
         dbDelta($sql3);
+        dbDelta($sql4);
 
         self::addDefaultRoles();
         self::addDefaultEvent();

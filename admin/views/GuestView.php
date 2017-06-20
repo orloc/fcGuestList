@@ -141,7 +141,7 @@ class GuestView {
                              $formatted
                         </td>
                         <td>
-                            <form name='delete{$r->id}' method='post', action='/wp/wp-admin/admin-post.php'>
+                            <form name='delete{$r->id}' method='post' action='/wp/wp-admin/admin-post.php'>
                                 <input type='hidden' name='action' value='delete_guest'>
                                 <input type='hidden' name='id' value='{$r->id}'>
                                 <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
