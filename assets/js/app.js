@@ -6,6 +6,10 @@ angular.module('admin', [])
     $scope.not_exists = false;
     $scope.show_edit = false;
     
+    $scope.open_edit_box = false;
+    
+    $scope.currently_editing = {};
+    
     var exists = window.location.search
         .split('&')
         .filter(function(i) {
@@ -36,10 +40,22 @@ angular.module('admin', [])
             $e.stopPropagation();
         }
     });
-
+    
+    $scope.closeEdit = function(){
+        $scope.currently_editing = {};
+        $scope.open_edit_box = false;
+        $scope.show_edit = false;
+    };
+    
+    $scope.openEdit = function(item){
+        $scope.currently_editing = item;
+        $scope.open_edit_box = true;
+        $scope.show_edit = false;
+    };
     
     $scope.toggleNew = function(){
         $scope.show_edit = !$scope.show_edit;
+        $scope.open_edit_box = false;
     };
     
 }]);

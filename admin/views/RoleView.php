@@ -33,6 +33,19 @@ class RoleView {
         }
         wp_redirect(self::$pageUri.'&notExists=true', 200);
     }
+    
+    public static function handleEdit(){
+        list($a,$id, $name, $price) = array_values($_POST);
+        $item = Database::hasItem(intval($id), 'id', self::$TABLE_NAME);
+        if ($item){
+            Database::update(self::$TABLE_NAME, [
+                'name' => $name, 
+                'price' => intval($price)
+            ], [ 'id' => $id]);
+            wp_redirect(self::$pageUri, 200);
+        }
+        wp_redirect(self::$pageUri.'&notExists=true', 200);
+    }
 
     public static function getView(){
     
@@ -67,6 +80,29 @@ class RoleView {
                     </table>
                     <p class="submit">
                         <input type="submit" class="button-primary" value="Add new Role"/>
+                    </p>
+                </form>
+            </div>
+
+            <div ng-show="open_edit_box === true" style="width: 80%; margin: 0 auto;">
+                <h4>Editing</h4>
+                <a ng-click="closeEdit()">X Close</a>
+                <form action="/wp/wp-admin/admin-post.php" name="roleEdit" method="POST">
+                    <input type="hidden" name="action" value="edit_role">
+                    <input type="hidden" name="id" value="{{ currently_editing.id }}">
+                    <table class="form-table">
+                        <tr class="form-field form-required">
+                            <td><label for="role">Role</label></td>
+                            <td><input type="text" name="role" value="{{ currently_editing.name }}"></td>
+                        </tr>
+
+                        <tr class="form-field form-required">
+                            <td><label for="role">Price</label></td>
+                            <td><input type="number" name="price" value="{{ currently_editing.price }}"></td>
+                        </tr>
+                    </table>
+                    <p class="submit">
+                        <input type="submit" class="button-primary" value="Update Role"/>
                     </p>
                 </form>
             </div>
@@ -110,7 +146,7 @@ class RoleView {
                                         <input type='hidden' name='id' value='{$r->id}'>
                                         <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
                                     </form>
-                                    <a href=''>Edit</a>
+                                    <button class='button-primary' ng-click='openEdit({ name: \"{$r->name}\", id: {$r->id}, price: {$r->price}})'>Edit</button>
                                 </td>
                             </tr>";
                 }

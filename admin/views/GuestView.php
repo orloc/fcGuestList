@@ -33,6 +33,18 @@ class GuestView {
         wp_redirect(self::$pageUri.'&exists=true', 200);
     }
 
+    public static function handleEdit(){
+        list($a,$id, $email) = array_values($_POST);
+        $item = Database::hasItem(intval($id), 'id', self::$TABLE_NAME);
+        if ($item){
+            Database::update(self::$TABLE_NAME, [
+                'email' => $email
+            ], [ 'id' => $id]);
+            wp_redirect(self::$pageUri, 200);
+        }
+        wp_redirect(self::$pageUri.'&notExists=true', 200);
+    }
+
     public static function handleDelete(){
         list($a,$id) = array_values($_POST);
         $item = Database::hasItem($id, 'id', self::$TABLE_NAME);
@@ -67,33 +79,27 @@ class GuestView {
         <h1>Guest List</h1>
         <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit !== true">New</button>
         <button  style="float: right" class="page-title-action aria-button-if-js" ng-click="toggleNew()" ng-show="show_edit === true">Hide Form</button>
-        <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
-            <form action="<?php echo self::$postUri ?>" name="guestNew" method="POST">
-                <input type="hidden" name="action" value="submit_guest">
+
+        <div ng-show="open_edit_box === true" style="width: 80%; margin: 0 auto;">
+            <h4>Editing</h4>
+            <a ng-click="closeEdit()">X Close</a>
+            <form action="/wp/wp-admin/admin-post.php" name="guestEdit" method="POST">
+                <input type="hidden" name="action" value="edit_guest">
+                <input type="hidden" name="id" value="{{ currently_editing.id }}">
                 <table class="form-table">
                     <tr class="form-field form-required">
                         <td><label for="role">Email</label></td>
-                        <td><input type="email" required name="email"></td>
-                    </tr>
-                    <tr class="form-field form-required">
-                        <td><label for="role">Role</label></td>
-                        <td><select name="role" required>
-                            <?php foreach ($roleList as $e): ?>
-                                <option value="<?= $e->id ?>"><?= $e->name ?></option>
-                            <?php endforeach; ?>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr class="form-field form-required">
-                        <td><label for="event">Event</label></td>
-                        <td><select name="event" required>
-                            <?php foreach ($events as $e): ?>
-                                <option value="<?= $e->id ?>"><?= $e->name ?></option>
-                            <?php endforeach; ?>
-                            </select>
-                        </td>
+                        <td><input type="email" value="{{ currently_editing.email }}" required name="email"></td>
                     </tr>
                 </table>
+                <p class="submit">
+                    <input type="submit" class="button-primary" value="Update Guest"/>
+                </p>
+            </form>
+        </div>
+
+        <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
+            <form action="<?php echo self::$postUri ?>" name="guestNew" method="POST">
                 <p class="submit">
                     <input type="submit" class="button-primary" value="Add new Guest"/>
                 </p>
@@ -146,7 +152,7 @@ class GuestView {
                                 <input type='hidden' name='id' value='{$r->id}'>
                                 <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
                             </form>
-                            <a href=''>Edit</a>
+                            <button class='button-primary' ng-click='openEdit({ email: \"{$r->email}\", id: {$r->id}, role: {$r->role_id}})'>Edit</button>
                         </td>
                     </tr>";
             }

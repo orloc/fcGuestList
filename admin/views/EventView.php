@@ -21,9 +21,18 @@ class EventView {
         
         wp_redirect(self::$pageUri.'&exists=true', 200);
     }
-    
+
     public static function handleEdit(){
-        
+        list($a,$id, $name, $active) = array_values($_POST);
+        $item = Database::hasItem(intval($id), 'id', self::$TABLE_NAME);
+        if ($item){
+            Database::update(self::$TABLE_NAME, [
+                'name' => $name,
+                'is_active' => $active === 'on' ? 1 : 0
+            ], [ 'id' => $id]);
+            wp_redirect(self::$pageUri, 200);
+        }
+        wp_redirect(self::$pageUri.'&notExists=true', 200);
     }
 
     public static function handleDelete(){
@@ -53,10 +62,6 @@ class EventView {
                             <td><label for="name">Name</label></td>
                             <td><input type="text" name="name" required></td>
                         </tr>
-                        <tr class="form-field form-required">
-                            <td><label for="lockout">Lockout Date / Time</label></td>
-                            <td><input type="datetime" name="lockout" required></td>
-                        </tr>
                     </table>
                     <p class="submit">
                         <input type="submit" class="button-primary" value="Add new Event"/>
@@ -64,26 +69,22 @@ class EventView {
                 </form>
             </div>
 
-            <div ng-show="show_edit_item === true" style="width: 80%; margin: 0 auto;">
+            <div ng-show="open_edit_box === true" style="width: 80%; margin: 0 auto;">
                 <form action="<?php echo self::$postUri ?>" method="POST" name="eventEdit">
                     <input type="hidden" name="action" value="edit_event">
-                    <input type="hidden" name="event_id" value="{{ selected }}">
+                    <input type="hidden" name="event_id" value="{{ currently_editing.id }}">
                     <table class="form-table">
                         <tr class="form-field form-required">
                             <td><label for="name">Name</label></td>
-                            <td><input type="text" name="name" required></td>
-                        </tr>
-                        <tr class="form-field form-required">
-                            <td><label for="lockout">Lockout Date / Time</label></td>
-                            <td><input type="datetime" name="lockout" required></td>
+                            <td><input type="text" name="name" value="{{ currently_editing.name}}" required></td>
                         </tr>
                         <tr class="form-field form-required">
                             <td><label for="isActive">Is Active?</label></td>
-                            <td><input type="checkbox" name="is_active"</td>
+                            <td><input type="checkbox" ng-checked="currently_editing.is_active === 1" name="is_active"</td>
                         </tr>
                     </table>
                     <p class="submit">
-                        <input type="submit" class="button-primary" value="Confirm"/>
+                        <input type="submit" class="button-primary" value="Update Event"/>
                     </p>
                 </form>
             </div>
@@ -91,7 +92,6 @@ class EventView {
                 <thead>
                 <th>id</th>
                 <th>Name</th>
-                <th>Lockout Date</th>
                 <th>Is Active</th>
                 <th>Created At</th>
                 <th></th>
@@ -117,9 +117,6 @@ class EventView {
                                 $r->name
                             </td>
                             <td>
-                                $fLockout
-                            </td>
-                            <td>
                                 $active
                             </td>
                             <td>
@@ -132,7 +129,7 @@ class EventView {
                                     <input type='hidden' name='id' value='{$r->id}'>
                                     <input type='submit' style='float: right' class='button-secondary delete' value ='Archive'/>
                                 </form>
-                                <a href=''>Edit</a>
+                                <button class='button-primary' ng-click='openEdit({ name: \"{$r->name}\", id: {$r->id}, is_active: {$r->is_active}})'>Edit</button>
                             </td>
                         </tr>";
                 }
