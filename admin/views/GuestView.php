@@ -58,7 +58,14 @@ class GuestView {
     }
 
     public static function getView(){
-        $results = Database::all(self::$TABLE_NAME);
+        global $wpdb;
+        $tableName = $wpdb->prefix . 'guest';
+        $guestQuery = "select t.*, count(tt.id)  as additions FROM $tableName t 
+                       left join guest_additions tt on t.id=tt.guest_id 
+                       where t.deleted_at is null
+                       group by t.id";
+
+        $results = $wpdb->get_results($guestQuery);
         $roleList = Database::all('member_type');
         $events = Database::all('event');
         
@@ -135,7 +142,7 @@ class GuestView {
                             {$index['roles'][$r->role_id] }
                         </td>
                         <td>
-                            
+                            $r->additions 
                         </td>
                         <td>
                             {$index['events'][$r->event_id] }
