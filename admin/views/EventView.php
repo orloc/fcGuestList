@@ -70,6 +70,8 @@ class EventView {
             </div>
 
             <div ng-show="open_edit_box === true" style="width: 80%; margin: 0 auto;">
+                <h4>Editing</h4>
+                <a ng-click="closeEdit()">X Close</a>
                 <form action="<?php echo self::$postUri ?>" method="POST" name="eventEdit">
                     <input type="hidden" name="action" value="edit_event">
                     <input type="hidden" name="event_id" value="{{ currently_editing.id }}">
