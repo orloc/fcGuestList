@@ -32,9 +32,9 @@ add_action( 'admin_enqueue_scripts', 'registerScripts' );
 
 
 function guest_list_admin_actions(){
-    add_menu_page('Guest List', 'Guest List', 'manage_options', __FILE__.'guests', [ 'GuestView','getView']);
-    add_menu_page('Events', 'Events', 'manage_options', __FILE__.'events', ['EventView','getView']);
-    add_menu_page('Roles', 'Roles', 'manage_options', __FILE__.'roles', ['RoleView','getView']);
+    add_menu_page('Guest List', 'Guest List', 'manage_options', __FILE__.'guests', [ 'GuestView','getView'], 'dashicons-groups');
+    add_menu_page('Events', 'Events', 'manage_options', __FILE__.'events', ['EventView','getView'], 'dashicons-calendar');
+    add_menu_page('Roles', 'Roles', 'manage_options', __FILE__.'roles', ['RoleView','getView'], 'dashicons-admin-network');
 }
 
 function registerScripts(){
