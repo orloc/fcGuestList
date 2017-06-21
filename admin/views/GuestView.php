@@ -107,6 +107,32 @@ class GuestView {
 
         <div ng-show="show_edit === true" style="width: 80%; margin: 0 auto;">
             <form action="<?php echo self::$postUri ?>" name="guestNew" method="POST">
+                <input type="hidden" name="action" value="submit_guest">
+                <table class="form-table">
+                    <tr class="form-field form-required">
+                        <td><label for="role">Email</label></td>
+                        <td><input type="email" required name="email"></td>
+                    </tr>
+                    <tr class="form-field form-required">
+                        <td><label for="role">Role</label></td>
+                        <td><select name="role" required>
+                                <?php foreach ($roleList as $e): ?>
+                                    <option value="<?= $e->id ?>"><?= $e->name ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr class="form-field form-required">
+                        <td><label for="event">Event</label></td>
+                        <td><select name="event" required>
+                                <?php foreach ($events as $e): ?>
+                                    <option value="<?= $e->id ?>"><?= $e->name ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
                 <p class="submit">
                     <input type="submit" class="button-primary" value="Add new Guest"/>
                 </p>
